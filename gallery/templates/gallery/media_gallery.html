@@ -1,0 +1,75 @@
+{% extends "gallery/base.html" %} 
+
+{% block title %}Gallery{% endblock %} 
+
+{% block content %}
+<h1>Our Media Collection</h1>
+
+<div class="gallery-grid">
+  {% for item in items %}
+  <div class="gallery-item">
+    {# This link goes to the detail page #}
+    <a href="{% url 'media_detail' item.pk %}">
+      {% if item.file_type == 'image' %}
+      <img src="{{ item.file.url }}" alt="{{ item.title }}" />
+      {% elif item.file_type == 'video' %}
+      <video muted loop playsinline>
+        <source src="{{ item.file.url }}" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      {% endif %}
+      <p>{{ item.title }}</p>
+    </a>
+
+    {# This is the new Download link you added #}
+    <p>
+      <a href="{% url 'download_media' item.pk %}" class="download-btn"
+        >Download</a
+      >
+    </p>
+  </div>
+  {% empty %}
+  <p>No media has been uploaded yet. Please add some via the admin panel!</p>
+  {% endfor %}
+</div>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .gallery-item {
+    text-align: center;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .gallery-item img,
+  .gallery-item video {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+  .gallery-item a {
+    text-decoration: none;
+    color: #333;
+  }
+  .download-btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .download-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
+{% endblock %}

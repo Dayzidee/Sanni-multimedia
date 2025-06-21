@@ -1,0 +1,52 @@
+{% extends "gallery/base.html" %} 
+
+{% block title %}{{ item.title }}{% endblock %} 
+
+{% block content %}
+<div class="detail-view">
+  <h1>{{ item.title }}</h1>
+  <p class="upload-date">Uploaded on: {{ item.upload_date|date:"F j, Y" }}</p>
+
+  <div class="media-container">
+    {% if item.file_type == 'image' %}
+    <img src="{{ item.file.url }}" alt="{{ item.title }}" />
+    {% elif item.file_type == 'video' %}
+    <video controls>
+      <source src="{{ item.file.url }}" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    {% else %}
+    <p>Unsupported file type.</p>
+    {% endif %}
+    <p>
+      <a href="{% url 'download_media' item.pk %}" class="download-btn"
+        >Download</a
+      >
+    </p>
+  </div>
+
+  {% if item.description %}
+  <div class="description">
+    <h3>Description</h3>
+    <p>{{ item.description }}</p>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .detail-view {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+  }
+  .media-container img,
+  .media-container video {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .upload-date {
+    color: #777;
+    font-style: italic;
+  }
+</style>
+{% endblock %}
