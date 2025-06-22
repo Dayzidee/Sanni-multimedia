@@ -23,9 +23,19 @@ def media_detail(request, pk):
 
 def download_media(request, pk):
     item = get_object_or_404(MediaItem, pk=pk)
-    file_path = item.file.path
-    if os.path.exists(file_path):
-        response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=os.path.basename(file_path))
-        return response
-    else:
-        raise Http404("File does not exist")
+    
+    # For Cloudinary or remote storage, redirect to the file URL
+    if hasattr(item.file, 'url'):
+        from django.http import HttpResponseRedirect
+        return HttpResponseRedirect(item.file.url)
+    
+    # For local storage, serve the file directly
+    try:
+        file_path = item.file.path
+        if os.path.exists(file_path):
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=os.path.basename(file_path))
+            return response
+    except:
+        pass
+    
+    raise Http404("File does not exist")
